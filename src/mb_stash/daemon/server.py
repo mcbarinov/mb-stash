@@ -9,9 +9,10 @@ import logging
 import os
 import signal
 
+from mm_clikit import write_pid_file
+
 from mb_stash import clipboard
 from mb_stash.config import Config
-from mb_stash.daemon.process import write_pid_file
 from mb_stash.daemon.protocol import Response, decode_request, encode_response
 from mb_stash.stash import Stash, StashError
 

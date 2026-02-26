@@ -1,6 +1,6 @@
 [project]
 name = "mb-stash"
-version = "0.0.1"
+version = "0.0.2"
 description = "Quick access to your non-critical secrets from the terminal"
 readme = "README.md"
 license = "MIT"
@@ -17,7 +17,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 requires-python = ">=3.14"
-dependencies = ["cryptography~=46.0.5", "mm-clikit~=0.0.8"]
+dependencies = ["cryptography~=46.0.5", "mm-clikit~=0.0.9"]
 [project.scripts]
 mb-stash = "mb_stash.cli:app"
 
@@ -38,7 +38,7 @@ dev = [
     "pytest-xdist~=3.8.0",
     "ruff~=0.15.2",
     "pip-audit~=2.10.0",
-    "bandit~=1.9.3",
+    "bandit~=1.9.4",
     "mypy~=1.19.1",
 ]
 

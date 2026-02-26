@@ -3,17 +3,18 @@
 import time
 
 import typer
+from mm_clikit import is_process_running
 
 from mb_stash.app_context import use_context
 from mb_stash.daemon.client import DaemonClient
-from mb_stash.daemon.process import is_alive, is_connectable, is_daemon_running, stop_daemon
+from mb_stash.daemon.process import is_connectable, is_daemon_running, stop_daemon
 
 
 def stop(ctx: typer.Context) -> None:
     """Stop the daemon."""
     app = use_context(ctx)
 
-    pid_alive = is_alive(app.cfg.daemon_pid_path)
+    pid_alive = is_process_running(app.cfg.daemon_pid_path, command_contains="mb-stash")
     reachable = is_connectable(app.cfg.daemon_sock_path)
 
     if pid_alive:
