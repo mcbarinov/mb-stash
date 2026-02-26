@@ -7,7 +7,7 @@ import typer
 from mb_stash import clipboard
 from mb_stash.app_context import use_context
 from mb_stash.daemon.client import DaemonClient
-from mb_stash.daemon.process import is_daemon_running
+from mb_stash.daemon.process import is_daemon_available
 
 
 def lock(ctx: typer.Context) -> None:
@@ -19,7 +19,7 @@ def lock(ctx: typer.Context) -> None:
         clipboard.clear()
 
     # Daemon not running — stash is already locked
-    if not is_daemon_running(app.cfg):
+    if not is_daemon_available(app.cfg):
         app.out.print_locked()
         return
 

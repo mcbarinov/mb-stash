@@ -6,7 +6,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 
-_DEFAULT_DATA_DIR = Path.home() / ".local" / "mb-stash"
+DEFAULT_DATA_DIR = Path.home() / ".local" / "mb-stash"
 
 
 class Config(BaseModel):
@@ -48,10 +48,17 @@ class Config(BaseModel):
         """Log file."""
         return self.data_dir / "stash.log"
 
+    def cli_base_args(self) -> list[str]:
+        """Build CLI base args, including --data-dir only when non-default."""
+        args: list[str] = ["mb-stash"]
+        if self.data_dir != DEFAULT_DATA_DIR:
+            args.extend(["--data-dir", str(self.data_dir)])
+        return args
+
     @staticmethod
     def build(data_dir: Path | None = None) -> Config:
         """Build a Config from defaults and optional config.toml."""
-        resolved_dir = data_dir if data_dir is not None else _DEFAULT_DATA_DIR
+        resolved_dir = data_dir if data_dir is not None else DEFAULT_DATA_DIR
         config_path = resolved_dir / "config.toml"
 
         kwargs: dict[str, Any] = {"data_dir": resolved_dir}

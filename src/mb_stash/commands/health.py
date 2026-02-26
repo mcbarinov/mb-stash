@@ -4,14 +4,14 @@ import typer
 
 from mb_stash.app_context import use_context
 from mb_stash.daemon.client import DaemonClient
-from mb_stash.daemon.process import is_daemon_running
+from mb_stash.daemon.process import is_daemon_available
 
 
 def health(ctx: typer.Context) -> None:
     """Show daemon status (running, locked/unlocked)."""
     app = use_context(ctx)
 
-    if not is_daemon_running(app.cfg):
+    if not is_daemon_available(app.cfg):
         app.out.print_health(running=False, locked=True)
         return
 

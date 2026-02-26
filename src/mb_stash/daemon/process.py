@@ -33,11 +33,17 @@ def stop_daemon(cfg: Config) -> bool:
         return False
 
     stopped = stop_process(pid)
-    _cleanup_files(cfg)
+
+    # Remove stale PID and socket files
+    with contextlib.suppress(OSError):
+        cfg.daemon_pid_path.unlink()
+    with contextlib.suppress(OSError):
+        cfg.daemon_sock_path.unlink()
+
     return stopped
 
 
-def is_daemon_running(cfg: Config) -> bool:
+def is_daemon_available(cfg: Config) -> bool:
     """Check whether the daemon is running via PID or socket."""
     return is_process_running(cfg.daemon_pid_path, command_contains="mb-stash") or is_connectable(cfg.daemon_sock_path)
 
@@ -53,7 +59,7 @@ def ensure_daemon(cfg: Config) -> None:
         return
 
     # Socket not connectable — spawn a new daemon
-    spawn_detached(["mb-stash", "--data-dir", str(cfg.data_dir), "daemon"])
+    spawn_detached([*cfg.cli_base_args(), "daemon"])
 
     # Poll until socket is ready
     deadline = time.monotonic() + _POLL_TIMEOUT
@@ -64,11 +70,3 @@ def ensure_daemon(cfg: Config) -> None:
 
     msg = f"Daemon failed to start within {_POLL_TIMEOUT}s."
     raise RuntimeError(msg)
-
-
-def _cleanup_files(cfg: Config) -> None:
-    """Remove stale PID and socket files."""
-    with contextlib.suppress(OSError):
-        cfg.daemon_pid_path.unlink()
-    with contextlib.suppress(OSError):
-        cfg.daemon_sock_path.unlink()

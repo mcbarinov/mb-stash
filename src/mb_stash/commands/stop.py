@@ -7,7 +7,7 @@ from mm_clikit import is_process_running
 
 from mb_stash.app_context import use_context
 from mb_stash.daemon.client import DaemonClient
-from mb_stash.daemon.process import is_connectable, is_daemon_running, stop_daemon
+from mb_stash.daemon.process import is_connectable, is_daemon_available, stop_daemon
 
 
 def stop(ctx: typer.Context) -> None:
@@ -26,7 +26,7 @@ def stop(ctx: typer.Context) -> None:
     if not pid_alive and reachable:
         time.sleep(0.5)
 
-    if is_daemon_running(app.cfg):
+    if is_daemon_available(app.cfg):
         app.out.print_error_and_exit("stop_failed", "Daemon is still running after stop attempt.")
 
     app.out.print_stopped()
