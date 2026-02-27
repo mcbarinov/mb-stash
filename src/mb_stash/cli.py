@@ -16,6 +16,7 @@ from mb_stash.commands.health import health
 from mb_stash.commands.init import init
 from mb_stash.commands.list import list_
 from mb_stash.commands.lock import lock
+from mb_stash.commands.rename import rename
 from mb_stash.commands.stop import stop
 from mb_stash.commands.unlock import unlock
 from mb_stash.config import Config
@@ -56,3 +57,4 @@ app.command(aliases=["g"])(get)
 app.command("list", aliases=["l"])(list_)
 app.command()(add)
 app.command()(delete)
+app.command()(rename)

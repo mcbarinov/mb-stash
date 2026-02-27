@@ -118,6 +118,11 @@ class DaemonServer:
                     if not self._stash.delete(params["key"]):
                         return Response.fail("not_found", f"Key '{params['key']}' not found.")
                     return Response.success()
+                case "rename":
+                    if "key" not in params or "new_key" not in params:
+                        return Response.fail("invalid_request", "Missing 'key' or 'new_key' parameter.")
+                    self._stash.rename(params["key"], params["new_key"])
+                    return Response.success()
                 case "health":
                     return Response.success({"unlocked": self._stash.is_unlocked})
                 case "schedule_clipboard_clear":

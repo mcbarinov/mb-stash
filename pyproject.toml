@@ -1,6 +1,6 @@
 [project]
 name = "mb-stash"
-version = "0.0.3"
+version = "0.0.4"
 description = "Quick access to your non-critical secrets from the terminal"
 readme = "README.md"
 license = "MIT"
@@ -36,7 +36,7 @@ exclude = [".claude/", "CLAUDE.md", "ADR.md", "justfile", "uv.lock", "tests/"]
 dev = [
     "pytest~=9.0.2",
     "pytest-xdist~=3.8.0",
-    "ruff~=0.15.2",
+    "ruff~=0.15.4",
     "pip-audit~=2.10.0",
     "bandit~=1.9.4",
     "mypy~=1.19.1",

@@ -38,6 +38,12 @@ class Output(DualModeOutput):
         """Print secret deletion confirmation."""
         self.output(json_data={"key": key}, display_data=f"Secret '{key}' deleted.")
 
+    def print_secret_renamed(self, old_key: str, new_key: str) -> None:
+        """Print secret rename confirmation."""
+        self.output(
+            json_data={"old_key": old_key, "new_key": new_key}, display_data=f"Secret '{old_key}' renamed to '{new_key}'."
+        )
+
     # --- Daemon ---
 
     def print_locked(self) -> None:

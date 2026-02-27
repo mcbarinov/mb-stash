@@ -106,3 +106,7 @@ class DaemonClient:
     def delete(self, key: str) -> Response:
         """Delete a secret."""
         return self.send("delete", {"key": key})
+
+    def rename(self, key: str, new_key: str) -> Response:
+        """Rename a secret key."""
+        return self.send("rename", {"key": key, "new_key": new_key})

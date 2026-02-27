@@ -187,6 +187,24 @@ class Stash:
         self._persist()
         return True
 
+    def rename(self, old_key: str, new_key: str) -> None:
+        """Rename a secret key without changing its value.
+
+        Raises:
+            StashError: New key empty (code: ``empty_key``), old key not found
+                (code: ``not_found``), or new key already exists (code: ``already_exists``).
+
+        """
+        if not new_key:
+            raise StashError("empty_key", "New key cannot be empty.")
+        secrets = self._require_unlocked()
+        if old_key not in secrets:
+            raise StashError("not_found", f"Key '{old_key}' not found.")
+        if new_key in secrets:
+            raise StashError("already_exists", f"Key '{new_key}' already exists.")
+        secrets[new_key] = secrets.pop(old_key)
+        self._persist()
+
     # --- Private helpers ---
 
     def _require_store(self) -> None:
