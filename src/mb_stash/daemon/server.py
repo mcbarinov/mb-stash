@@ -34,6 +34,7 @@ class DaemonServer:
         self._server: asyncio.AbstractServer | None = None
         self._inactivity_handle: asyncio.TimerHandle | None = None  # auto-lock timer, reset on every client request
         self._clipboard_handle: asyncio.TimerHandle | None = None  # clipboard auto-clear timer, reset on every get
+        self._clipboard_value: str | None = None  # last copied secret, used for conditional clear
         # Strong references to background tasks to prevent GC
         self._background_tasks: set[asyncio.Task[None]] = set()
 
@@ -126,6 +127,7 @@ class DaemonServer:
                 case "health":
                     return Response.success({"unlocked": self._stash.is_unlocked})
                 case "schedule_clipboard_clear":
+                    self._clipboard_value = params.get("value")
                     self._reset_clipboard_timer()
                     return Response.success()
                 case "stop":
@@ -168,14 +170,17 @@ class DaemonServer:
         if self._clipboard_handle is not None:
             self._clipboard_handle.cancel()
             self._clipboard_handle = None
+        self._clipboard_value = None
 
     def _on_clipboard_timeout(self) -> None:
-        """Clear clipboard after timeout."""
+        """Clear clipboard after timeout, only if it still contains the copied secret."""
         logger.info("Clipboard timeout — clearing clipboard.")
         try:
-            clipboard.clear()
+            clipboard.clear(expected=self._clipboard_value)
         except Exception:
             logger.exception("Failed to clear clipboard")
+        finally:
+            self._clipboard_value = None
 
     def _schedule_shutdown(self) -> None:
         """Schedule a shutdown task with a strong reference to prevent GC."""

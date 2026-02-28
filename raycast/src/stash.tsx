@@ -106,7 +106,7 @@ function SecretList() {
           style: Toast.Style.Success,
           title: "Copied to clipboard",
         });
-        daemon.scheduleClipboardClear(socketPath).catch(() => {});
+        daemon.scheduleClipboardClear(socketPath, resp.data.value as string).catch(() => {});
       } else {
         await showToast({
           style: Toast.Style.Failure,

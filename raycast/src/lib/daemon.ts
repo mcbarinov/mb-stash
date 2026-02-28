@@ -87,8 +87,9 @@ export function get(socketPath: string, key: string): Promise<DaemonResponse> {
 /** Tell the daemon to clear the clipboard after the configured timeout. */
 export function scheduleClipboardClear(
   socketPath: string,
+  value: string,
 ): Promise<DaemonResponse> {
-  return sendRequest(socketPath, "schedule_clipboard_clear");
+  return sendRequest(socketPath, "schedule_clipboard_clear", { value });
 }
 
 // --- Daemon lifecycle ---

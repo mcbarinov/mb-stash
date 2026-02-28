@@ -33,4 +33,4 @@ def get(
         app.out.print_secret_copied(key)
         # Schedule clipboard auto-clear via daemon (best-effort)
         with contextlib.suppress(Exception):
-            client.send("schedule_clipboard_clear")
+            client.send("schedule_clipboard_clear", {"value": value})
