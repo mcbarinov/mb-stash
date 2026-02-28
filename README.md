@@ -170,10 +170,44 @@ mb-stash get my-token
 
 mb-stash locks on inactivity timeout and manual `mb-stash lock`. Screen lock detection (macOS, Linux) is planned.
 
-## Planned integrations
+## Raycast extension
 
-- **Raycast extension** — search and copy secrets without touching the terminal
-- **Alfred workflow** — same for Alfred users
+Search and copy secrets without touching the terminal. The extension communicates directly with the mb-stash daemon over Unix socket — no CLI spawning, instant responses.
+
+### Installation
+
+```bash
+cd raycast
+npm install
+npm run dev    # opens in Raycast automatically
+```
+
+Requires [Raycast](https://raycast.com) and Node.js 22+.
+
+### Commands
+
+| Command | Description |
+| --- | --- |
+| **Search Secrets** | List all keys, filter by typing, copy to clipboard |
+| **Lock Stash** | Lock the stash immediately (no UI, good for a keyboard shortcut) |
+
+If the stash is locked, Search Secrets prompts for the master password before showing the list. The daemon starts automatically if not running.
+
+### Keyboard shortcuts (in Search Secrets)
+
+| Shortcut | Action |
+| --- | --- |
+| Enter | Copy secret to clipboard |
+| Cmd+L | Lock stash |
+
+### Configuration
+
+In Raycast extension preferences:
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| Data Directory | `~/.local/mb-stash` | Path to mb-stash data directory |
+| mb-stash CLI Path | `mb-stash` | Path to CLI binary (used only for daemon startup) |
 
 ## Tech stack
 

@@ -10,6 +10,7 @@ Language switching applies ONLY to chat. All code, comments, commit messages, an
 These files are REQUIRED. Read them fully and follow all rules.
 - `~/.claude/shared-rules/general.md`
 - `~/.claude/shared-rules/python.md`
+- `~/.claude/shared-rules/typescript.md`
 
 ## Project Reading (context)
 These files are REQUIRED for project understanding.

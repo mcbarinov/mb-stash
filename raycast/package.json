@@ -1,0 +1,63 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "mb-stash",
+  "title": "mb-stash",
+  "description": "Quick access to your non-critical secrets from mb-stash",
+  "icon": "extension-icon.png",
+  "author": "mcbarinov",
+  "categories": ["Security", "Productivity"],
+  "platforms": ["macOS"],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "stash",
+      "title": "Stash",
+      "subtitle": "mb-stash",
+      "description": "Search and copy secrets from your stash",
+      "keywords": ["get", "secret"],
+      "mode": "view"
+    },
+    {
+      "name": "lock-stash",
+      "title": "Lock Stash",
+      "subtitle": "mb-stash",
+      "description": "Lock the stash immediately",
+      "mode": "no-view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "dataDir",
+      "title": "Data Directory",
+      "description": "Path to mb-stash data directory",
+      "type": "textfield",
+      "required": false,
+      "default": "~/.local/mb-stash"
+    },
+    {
+      "name": "mbStashPath",
+      "title": "mb-stash CLI Path",
+      "description": "Path to mb-stash CLI binary (for daemon startup)",
+      "type": "textfield",
+      "required": false,
+      "default": "mb-stash"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.103.0",
+    "@raycast/utils": "^1.19.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.1.0",
+    "@types/node": "22.x",
+    "@types/react": "19.x",
+    "eslint": "^9.0.0",
+    "typescript": "^5.8.0"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix"
+  }
+}
