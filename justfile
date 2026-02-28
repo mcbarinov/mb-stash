@@ -31,6 +31,9 @@ install: build
     uv tool uninstall mb-stash || true
     uv tool install dist/mb_stash-*.whl
 
+raycast:
+    cd raycast && pnpm run build
+
 publish: build
     git diff-index --quiet HEAD
     printf "Enter PyPI token: " && IFS= read -rs TOKEN && echo && uv publish --token "$TOKEN"

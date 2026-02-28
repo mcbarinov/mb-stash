@@ -3,7 +3,7 @@
 import net from "net";
 import os from "os";
 import path from "path";
-import { execFile } from "child_process";
+import { spawn } from "child_process";
 
 const TIMEOUT_MS = 10_000;
 const POLL_INTERVAL_MS = 50;
@@ -126,7 +126,16 @@ function isConnectable(socketPath: string): Promise<boolean> {
 /** Start the daemon if it is not already running, then wait until it is connectable. */
 export async function ensureDaemon(prefs: Preferences): Promise<void> {
   const socketPath = resolveSocketPath(prefs.dataDir);
-  if (await isConnectable(socketPath)) return;
+
+  console.log("[ensureDaemon] socketPath:", socketPath);
+  console.log("[ensureDaemon] prefs.mbStashPath:", prefs.mbStashPath);
+  console.log("[ensureDaemon] prefs.dataDir:", prefs.dataDir);
+
+  if (await isConnectable(socketPath)) {
+    console.log("[ensureDaemon] daemon already running, skipping start");
+    return;
+  }
+  console.log("[ensureDaemon] daemon not running, starting...");
 
   // Build CLI args
   const args: string[] = [];
@@ -137,19 +146,53 @@ export async function ensureDaemon(prefs: Preferences): Promise<void> {
   }
   args.push("daemon");
 
-  // Spawn detached daemon
-  const child = execFile(prefs.mbStashPath, args, {
-    detached: true,
-    stdio: "ignore",
-  } as never);
-  child.unref();
+  const resolvedBinary = prefs.mbStashPath.replace(/^~/, os.homedir());
+
+  // Raycast inherits a minimal macOS launchd PATH — augment with common install locations
+  const extraDirs = [
+    path.join(os.homedir(), ".local", "bin"),
+    "/usr/local/bin",
+    "/opt/homebrew/bin",
+  ];
+  const augmentedPath = [...extraDirs, process.env.PATH].join(":");
+
+  console.log("[ensureDaemon] resolvedBinary:", resolvedBinary);
+  console.log("[ensureDaemon] args:", args);
+  console.log("[ensureDaemon] augmentedPath:", augmentedPath);
+
+  // Spawn detached daemon and wait for spawn result
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(resolvedBinary, args, {
+      detached: true,
+      stdio: "ignore",
+      env: { ...process.env, PATH: augmentedPath },
+    });
+
+    child.on("error", (err) => {
+      console.error("[ensureDaemon] spawn error:", err);
+      reject(new Error(`mb-stash binary not found at "${resolvedBinary}"`));
+    });
+
+    // If the process spawned without error, detach and continue
+    child.on("spawn", () => {
+      console.log("[ensureDaemon] spawn succeeded, pid:", child.pid);
+      child.unref();
+      resolve();
+    });
+  });
 
   // Poll until socket is ready
   const deadline = Date.now() + POLL_TIMEOUT_MS;
+  let pollCount = 0;
   while (Date.now() < deadline) {
-    if (await isConnectable(socketPath)) return;
+    if (await isConnectable(socketPath)) {
+      console.log("[ensureDaemon] daemon ready after", pollCount, "polls");
+      return;
+    }
+    pollCount++;
     await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
   }
 
+  console.error("[ensureDaemon] poll timeout after", pollCount, "polls");
   throw new Error("Daemon failed to start within 5s");
 }

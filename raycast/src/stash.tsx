@@ -106,7 +106,9 @@ function SecretList() {
           style: Toast.Style.Success,
           title: "Copied to clipboard",
         });
-        daemon.scheduleClipboardClear(socketPath, resp.data.value as string).catch(() => {});
+        daemon
+          .scheduleClipboardClear(socketPath, resp.data.value as string)
+          .catch(() => {});
       } else {
         await showToast({
           style: Toast.Style.Failure,
@@ -176,11 +178,13 @@ export default function Command() {
         } else {
           setState("locked");
         }
-      } catch {
+      } catch (err) {
+        console.error("[Command] ensureDaemon failed:", err);
         await showToast({
           style: Toast.Style.Failure,
           title: "Could not start mb-stash daemon",
-          message: "Is mb-stash installed?",
+          message:
+            err instanceof Error ? err.message : "Is mb-stash installed?",
         });
         setState("locked");
       }

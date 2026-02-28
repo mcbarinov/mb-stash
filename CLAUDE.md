@@ -30,3 +30,6 @@ Failure to follow this protocol is considered an error.
 For any manual verification or test data, always use `--data-dir /tmp/mb-stash__dev`.
 This avoids touching the user's real data.
 NEVER run `mb-stash` commands against the default data directory (`~/.mb-stash`).
+
+## Misc
+User input comes via voice dictation. Expect possible transcription errors like homophones, missing punctuation, or misheard words. Interpret intent rather than taking input literally.
